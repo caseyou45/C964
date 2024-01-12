@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cast Today!</title>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f2f2f2;
+      }
+
+      header {
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        padding: 1rem;
+      }
+
+      main {
+        max-width: 800px;
+        margin: 20px auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+
+      label {
+        margin-top: 10px;
+        display: block;
+      }
+
+      input,
+      select,
+      textarea {
+        width: calc(50% - 10px);
+        margin-bottom: 10px;
+        padding: 8px;
+        box-sizing: border-box;
+      }
+
+      textarea {
+        width: calc(100% - 10px);
+      }
+
+      input[type="submit"] {
+        width: 100%;
+        background-color: #333;
+        color: #fff;
+        padding: 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      .user-input-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      .user-input-table th,
+      .user-input-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+
+      .user-input-table th {
+        background-color: #f2f2f2;
+      }
+
+      .user-input-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+      input[type="submit"]:hover {
+        background-color: #555;
+      }
+
+      .try-again-link {
+        text-decoration: none;
+        padding: 10px 20px;
+        background-color: #333;
+        color: #ffffff;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+      }
+
+      .try-again-link:hover {
+        background-color: #ffffff;
+        color: #333;
+      }
+
+      .about {
+        margin-top: 5%;
+      }
+
+      .about h2,
+      h3 {
+        text-align: center;
+      }
+
+      img {
+        margin: 0 auto;
+        max-height: 100%;
+        max-width: 100%;
+      }
+      footer {
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        padding: 1rem;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Cast Today - IMDb Rating Form</h1>
+    </header>
+    <main>
+      {% if not prediction %}
+      <form action="/predict" method="post">
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" required />
+
+        <label for="release_year">Release Year:</label>
+        <input
+          type="number"
+          id="release_year"
+          name="release_year"
+          min="0"
+          required
+        />
+
+        <label for="runtime">Runtime (minutes):</label>
+        <input type="number" id="runtime" name="runtime" min="0" required />
+
+        <label for="runtime">Age Certification:</label>
+        <input
+          type="text"
+          id="age_certification"
+          name="age_certification"
+          required
+        />
+
+        <label for="type">Type:</label>
+        <select id="type" name="type" required>
+          <option value="MOVIE">MOVIE</option>
+          <option value="SHOW">SHOW</option>
+        </select>
+
+        <label for="description">Description:</label>
+        <textarea
+          id="description"
+          name="description"
+          rows="4"
+          cols="50"
+          required
+        ></textarea>
+
+        <input type="submit" value="Submit" />
+      </form>
+      {% else %}
+      <a href="/" class="try-again-link">Try Again</a>
+
+      <p>The predicted IMBb Rating is: {{ prediction }}</p>
+      <table class="user-input-table">
+        <tr>
+          <th>Attribute</th>
+          <th>Your Entered Value</th>
+        </tr>
+        <tr>
+          <td>Release Year</td>
+          <td>{{ user_input['release_year'][0] }}</td>
+        </tr>
+        <tr>
+          <td>Runtime</td>
+          <td>{{ user_input['runtime'][0] }}</td>
+        </tr>
+        <tr>
+          <td>Type</td>
+          <td>{{ user_input['type'][0] }}</td>
+        </tr>
+        <tr>
+          <td>Description</td>
+          <td>{{ user_input['description'][0] }}</td>
+        </tr>
+        <tr>
+          <td>Description Sentiment</td>
+          <td>{{ user_input['description_sentiment'][0] }}</td>
+        </tr>
+        <tr>
+          <td>Description Length</td>
+          <td>{{ user_input['description_length'][0] }}</td>
+        </tr>
+        <tr>
+          <td>Title</td>
+          <td>{{ user_input['title'][0] }}</td>
+        </tr>
+        <tr>
+          <td>Title Sentiment</td>
+          <td>{{ user_input['title_sentiment'][0] }}</td>
+        </tr>
+        <tr>
+          <td>Title Length</td>
+          <td>{{ user_input['title_length'][0] }}</td>
+        </tr>
+      </table>
+      {% endif %}
+
+      <section class="about">
+        <h2>About the Data</h2>
+        <p>
+          Below you will find images and descriptions of the data that is the
+          basis of the model.
+        </p>
+        <h3>Moive Types</h3>
+        <p>
+          The data contains both Movies and Series. Below shows the split
+          between the two.
+        </p>
+        <img
+          src="/static/types.png"
+          alt="Pie Chart Showing the spil between Movies and Shows"
+        />
+        <h3>Ratings</h3>
+        <p>
+          This histogram of ratings shows how common scores are around the 7
+          point mark
+        </p>
+        <img
+          src="/static/ratings.png"
+          alt="This histogram of ratings shows how common scores are around the 7 point mark"
+        />
+        <h3>Description Analysis</h3>
+        <p>
+          Below shows the length of the descriptions and their sentiment
+          analysis.
+        </p>
+        <img
+          src="/static/description.png"
+          alt="Graph of the length of the descriptions and their sentiment
+          analysis."
+        />
+      </section>
+    </main>
+
+    <footer>
+      <p>Cast Today</p>
+    </footer>
+  </body>
+</html>
