@@ -35,7 +35,7 @@ def load_model():
     #Same process above for description is applied to title; produces 'title_sentiment' and 'title_length'
     df['title'].fillna('', inplace=True)
     df['title_sentiment'] = df['title'].apply(get_sentiment)
-    df['title_length'] = df['description'].apply(len)
+    df['title_length'] = df['title'].apply(len)
 
     #Make the split and train the model 
     X = df[['release_year', 'runtime', 'type', 'description_sentiment', 'description_length', 'title_sentiment', 'title_length']]
@@ -44,10 +44,11 @@ def load_model():
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     model = LinearRegression()
+    
     model.fit(X_train, y_train)
+    
     test(model, X_train, X_test, y_train, y_test)
 
-    #model.predict(X_train, X_test, y_train, y_test)
 
     return model
 
@@ -55,8 +56,6 @@ def load_model():
 def test(model, X_train, X_test, y_train, y_test):
     y_pred = model.predict(X_test)
 
-
-    # Evaluate the model
     mse = mean_squared_error(y_test, y_pred)
     r2 = r2_score(y_test, y_pred)
 
@@ -64,25 +63,25 @@ def test(model, X_train, X_test, y_train, y_test):
     print(f'R-squared: {r2:.2f}')
     
     
-    test_movie = {
-    'release_year': 1994,
-    'runtime': 135,
-    'type': 0, 
-    'description': 'A prominent banker unjustly convicted of murder spends many years in the Shawshank prison. He is befriended by a convict who knows the ropes and helps him to cope with the frightening realities of prison life.',
-    'title': 'The Shawshank Redemption',
-    'age_certification' : 'R',
-    
-    }
-    
     # test_movie = {
-    # 'release_year': 2017,
-    # 'runtime': 95,
+    # 'release_year': 1994,
+    # 'runtime': 135,
     # 'type': 0, 
-    # 'description': 'A boy haunted by visions of a dark tower from a parallel reality teams up with the towers disillusioned guardian to stop an evil warlock known as the Man in Black who plans to use the boy to destroy the tower and open the gates of Hell.',
-    # 'title': 'The Dark Tower',
+    # 'description': 'A prominent banker unjustly convicted of murder spends many years in the Shawshank prison. He is befriended by a convict who knows the ropes and helps him to cope with the frightening realities of prison life.',
+    # 'title': 'The Shawshank Redemption',
     # 'age_certification' : 'R',
     
     # }
+    
+    test_movie = {
+    'release_year': 2017,
+    'runtime': 95,
+    'type': 0, 
+    'description': 'A boy haunted by visions of a dark tower from a parallel reality teams up with the towers disillusioned guardian to stop an evil warlock known as the Man in Black who plans to use the boy to destroy the tower and open the gates of Hell.',
+    'title': 'The Dark Tower',
+    'age_certification' : 'R',
+    
+    }
     
     test_df = pd.DataFrame([test_movie])
 
@@ -94,7 +93,7 @@ def test(model, X_train, X_test, y_train, y_test):
 
     test_df['description_length'] = test_df['description'].apply(len)
     
-    test_df['title_length'] = test_df['description'].apply(len)
+    test_df['title_length'] = test_df['title'].apply(len)
 
     X_test_df = test_df[['release_year', 'runtime', 'type', 'description_sentiment', 'description_length', 'title_sentiment', 'title_length']]
 

@@ -4,6 +4,7 @@ from predict import load_model
 from predict import get_sentiment
 
 app = Flask(__name__)
+
 model = load_model()
 
 @app.route('/')
@@ -27,7 +28,7 @@ def predict():
 
     df['description_length'] = df['description'].apply(len)
     
-    df['title_length'] = df['description'].apply(len)
+    df['title_length'] = df['title'].apply(len)
 
     X_df = df[['release_year', 'runtime', 'type', 'description_sentiment', 'description_length', 'title_sentiment', 'title_length']]
 
